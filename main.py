@@ -1,77 +1,126 @@
-from kivy.lang import Builder
 from kivymd.app import MDApp
-from jnius import autoclass, cast
-
-# مكونات أندرويد الضرورية
-PythonActivity = autoclass('org.kivy.android.PythonActivity')
-VpnService = autoclass('android.net.VpnService')
-Intent = autoclass('android.content.Intent')
+from kivy.lang import Builder
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.clock import mainthread, Clock
+from kivymd.uix.button import MDRaisedButton
+from kivymd.uix.textfield import MDTextField
+from kivymd.uix.label import MDLabel
+from kivymd.uix.boxlayout import MDBoxLayout
 
 KV = '''
-BoxLayout:
-    orientation: 'vertical'
-    padding: 20
-    spacing: 20
+ScreenManager:
+    MenuScreen:
+    ConnectScreen:
 
-    MDTextField:
-        id: server_ip
-        hint_text: "Server IP"
-        helper_text: "أدخل عنوان الخادم"
+<MenuScreen>:
+    name: "menu"
 
-    MDTextField:
-        id: port
-        hint_text: "Port"
-        helper_text: "أدخل المنفذ"
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 20
 
-    MDTextField:
-        id: username
-        hint_text: "Username"
-        helper_text: "أدخل اسم المستخدم"
+        MDLabel:
+            text: "Welcome to VPN App"
+            halign: "center"
+            font_style: "H4"
+        
+        MDRaisedButton:
+            text: "Start VPN"
+            pos_hint: {"center_x": 0.5}
+            on_press: app.switch_to_connect()
 
-    MDTextField:
-        id: password
-        hint_text: "Password"
-        helper_text: "أدخل كلمة المرور"
-        password: True
+<ConnectScreen>:
+    name: "connect"
 
-    MDRaisedButton:
-        id: connect_btn
-        text: "Connect"
-        on_release: app.connect_vpn()
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 20
 
-    MDRaisedButton:
-        id: disconnect_btn
-        text: "Disconnect"
-        on_release: app.disconnect_vpn()
+        MDTextField:
+            id: server_ip
+            hint_text: "Server IP"
+        
+        MDTextField:
+            id: port
+            hint_text: "Port"
+            input_filter: "int"
+        
+        MDTextField:
+            id: username
+            hint_text: "Username"
+        
+        MDTextField:
+            id: password
+            hint_text: "Password"
+            password: True
+        
+        MDRaisedButton:
+            text: "Connect"
+            pos_hint: {"center_x": 0.5}
+            on_press: app.connect_vpn()
 
-    MDLabel:
-        id: status
-        text: "Status: Disconnected"
-        halign: "center"
+        MDRaisedButton:
+            text: "Disconnect"
+            pos_hint: {"center_x": 0.5}
+            on_press: app.disconnect_vpn()
+
+        MDLabel:
+            id: status
+            text: "Status: Disconnected"
+            halign: "center"
+            theme_text_color: "Hint"
 '''
+
+class MenuScreen(Screen):
+    pass
+
+
+class ConnectScreen(Screen):
+    pass
+
 
 class VPNApp(MDApp):
     def build(self):
-        self.theme_cls.primary_palette = "Blue"
-        self.vpn_service = None
-        return Builder.load_string(KV)
+        self.screen_manager = Builder.load_string(KV)
+        return self.screen_manager
+
+    def switch_to_connect(self):
+        """Switch to the connect screen."""
+        self.screen_manager.current = "connect"
+
+    @mainthread
+    def update_status(self, status, color="Primary"):
+        """Update the status label."""
+        status_label = self.screen_manager.get_screen("connect").ids.status
+        status_label.text = f"Status: {status}"
+        if color not in ["Primary", "Secondary", "Hint", "Error", "Custom", "ContrastParentBackground"]:
+            color = "Primary"
+        status_label.theme_text_color = color
 
     def connect_vpn(self):
-        # طلب إذن تفعيل VPN
-        intent = Intent(PythonActivity.mActivity, VpnService)
-        PythonActivity.mActivity.startActivityForResult(intent, 0)
+        """Simulate VPN connection."""
+        server_ip = self.screen_manager.get_screen("connect").ids.server_ip.text
+        port = self.screen_manager.get_screen("connect").ids.port.text
+        username = self.screen_manager.get_screen("connect").ids.username.text
+        password = self.screen_manager.get_screen("connect").ids.password.text
 
-        # محاكاة الاتصال (يجب استبدالها بكود VPN حقيقي)
-        self.root.ids.status.text = "Status: Connecting..."
-        
-        # بعد الاتصال الناجح:
-        self.root.ids.status.text = "Status: Connected"
+        if not server_ip or not port or not username or not password:
+            self.update_status("Please fill all fields", "Error")
+            return
+
+        self.update_status("Connecting...", "Hint")
+        Clock.schedule_once(self.simulate_vpn_connection, 2)
 
     def disconnect_vpn(self):
-        # محاكاة إيقاف الاتصال
-        if self.vpn_service:
-            self.vpn_service.disconnect()
-        self.root.ids.status.text = "Status: Disconnected"
+        """Simulate VPN disconnection."""
+        self.update_status("Disconnected", "Error")
+
+    def simulate_vpn_connection(self, dt):
+        """Simulate a successful VPN connection."""
+        self.update_status("Connected", "Primary")
+
 
 if __name__ == "__main__":
     VPNApp().run()
