@@ -3,6 +3,7 @@ from kivy.lang import Builder
 from kivy.uix.scrollview import ScrollView
 import socket
 from threading import Thread
+from jnius import autoclass
 
 KV = '''
 MDScreen:
@@ -36,6 +37,10 @@ MDScreen:
         MDRaisedButton:
             text: "Connect"
             on_release: app.connect_to_server()
+
+        MDRaisedButton:
+            text: "Enable VPN"
+            on_release: app.enable_vpn()
 
         ScrollView:
             MDLabel:
@@ -89,6 +94,22 @@ class UDPApp(MDApp):
             self.log_message(f"[color=ff0000]Error: {str(e)}[/color]")
         finally:
             sock.close()
+
+    def enable_vpn(self):
+        try:
+            self.log_message("[color=00ff00]Enabling VPN...[/color]")
+            VpnService = autoclass('android.net.VpnService')
+            Intent = autoclass('android.content.Intent')
+            PythonActivity = autoclass('org.kivy.android.PythonActivity')
+            
+            activity = PythonActivity.mActivity
+            intent = Intent(activity, VpnService)
+            intent.setAction(VpnService.ACTION_VPN_SERVICE)
+            activity.startActivity(intent)
+            self.log_message("[color=00ff00]VPN Service started successfully![/color]")
+
+        except Exception as e:
+            self.log_message(f"[color=ff0000]Error enabling VPN: {str(e)}[/color]")
 
     def log_message(self, message):
         log_label = self.root.ids.log
