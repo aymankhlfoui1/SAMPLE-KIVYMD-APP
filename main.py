@@ -1,3 +1,5 @@
+from kivymd.app import MDApp
+from kivy.lang import Builder
 from jnius import autoclass, cast
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
