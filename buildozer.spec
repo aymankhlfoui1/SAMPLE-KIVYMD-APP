@@ -1,15 +1,14 @@
 [app]
-
 # (str) Title of your application
-title = SampleApp
+title = SimpleVPN
 
 # (str) Package name
-package.name = nfsApk
+package.name = Movistarvpn
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.novfensec
+package.domain = org.test
 
-# (str) Source code where the main.py live
+# (str) Source code where the main.py is located
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
@@ -18,156 +17,110 @@ source.include_exts = py,png,jpg,kv,atlas
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*,images/*.png
 
+# (list) Source files to exclude (let empty to not exclude anything)
+#source.exclude_exts = spec
+
+# (list) List of directory to exclude (let empty to not exclude anything)
+#source.exclude_dirs = tests, bin
+
+# (list) List of exclusions using pattern matching
+#source.exclude_patterns = license,images/*/*.jpg
+
 # (str) Application versioning (method 1)
-version = 0.1
+version = 1.0
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
 # version.filename = %(source.dir)s/main.py
 
-# (list) Application requirements
-# comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy==2.3.0,kivymd==1.1.1,pillow==10.3.0,openssl
+# (str) Title of your application
+package.name = simplevpn
 
-# (str) Custom source folders for requirements
-# Sets custom source for any requirements with recipes
-#requirements.source.kivy = ../../kivy
+# (str) Full name of your application
+package.full_name = SimpleVPN
 
-# (list) Garden requirements
-#garden_requirements = 
+# (str) The domain name associated with the package
+package.domain = org.test
+
+# (str) Source code location
+source.dir = .
+
+# (list) Source files to include (let empty to include all the files)
+source.include_exts = py,png,jpg,kv,atlas
+
+# (list) List of inclusions using pattern matching
+source.include_patterns = assets/*,images/*.png
 
 # (str) Presplash of the application
-presplash.filename = %(source.dir)s/images/presplash.png
+presplash.filename = %(source.dir)s/presplash.png
 
-# (str) Icon of the application
-icon.filename = %(source.dir)s/images/favicon.png
+# (list) Permissions required by the app (add here any additional permissions required)
+android.permissions = INTERNET, BIND_VPN_SERVICE
 
-# (list) Supported orientations
-# Valid options are: landscape, portrait, portrait-reverse or landscape-reverse
-orientation = portrait
+# (list) Features required by the app (add here any additional features required)
+# android.features = android.hardware.touchscreen
 
-# (list) List of service to declare
-#services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
+# (str) The name of the service
+android.service = org.kivy.android.PythonService
 
-#
-# OSX Specific
-#
+# (str) Path to the manifest template file
+android.manifest_template = ./manifest_template.xml
 
-# 
-# author = 
+# (str) Android API to use
+android.api = 31
 
-# change the major version of python used by the app
-#osx.python_version = 3
-
-# Kivy version to use
-#osx.kivy_version = 1.9.1
-
-#
-# Android specific
-#
-
-# (bool) Indicate if the application should be fullscreen or not
-fullscreen = 0
-
-# (string) Presplash background color (for new android toolchain)
-# Supported formats are: #RRGGBB #AARRGGBB or one of the following names:
-# red, blue, green, black, white, gray, cyan, magenta, yellow, lightgray,
-# darkgray, grey, lightgrey, darkgrey, aqua, fuchsia, lime, maroon, navy,
-# olive, purple, silver, teal.
-#android.presplash_color = #FFFFFF
-
-# (list) Permissions
-android.permissions = android.permission.INTERNET, android.permission.BIND_VPN_SERVICE, android.permission.WRITE_EXTERNAL_STORAGE
-
-# (int) Target Android API, should be as high as possible.
-android.api = 33
-
-# (int) Minimum API your APK / AAB will support.
+# (str) Minimum API for the app
 android.minapi = 21
 
-# (int) Android SDK version to use
-#android.sdk = 20
+# (str) Path to Android NDK
+android.ndk = 23b
 
-# (str) Android NDK version to use
-#android.ndk = 19b
+# (list) Requirements needed for the app
+requirements = python3,kivy,android,jnius
 
-# (bool) Use --private data storage (True) or --dir public storage (False)
-#android.private_storage = True
+# (bool) Enable full layout rendering
+fullscreen = 0
 
-# (str) Android NDK directory (if empty, it will be automatically downloaded.)
-#android.ndk_path = 
+# (list) Orientation of the app
+orientation = portrait
 
-# (str) Android SDK directory (if empty, it will be automatically downloaded.)
-#android.sdk_path = 
+# (str) Path to icon file
+icon.filename = %(source.dir)s/icon.png
 
-# (str) ANT directory (if empty, it will be automatically downloaded.)
-#android.ant_path = 
+# (str) Path to permissions file
+permissions.filename = %(source.dir)s/permissions.xml
 
-# (bool) enable AndroidX support. Enable when 'android.gradle_dependencies'
-# contains an 'androidx' package, or any package from Kotlin source.
-android.enable_androidx = True
+# (bool) Enable SSL verification
+android.verify_ssl = 1
 
-# (list) The Android archs to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
-android.archs = arm64-v8a, armeabi-v7a
+# (str) Path to the splash screen
+splash.filename = %(source.dir)s/splash.png
 
-# (int) autoconnect native environment
-#android.autoconnect = 0
+# (bool) Use Java as your default build language
+android.use_java = 1
 
-# (bool) enables Android auto backup feature (Android API >=23)
-android.allow_backup = True
+# (list) Include additional gradle dependencies
+android.gradle_dependencies = org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.50
 
-# (str) android architecture that will be installed in the device
-#android.install_arch = arm64-v8a
+# (str) Path to the private directory
+android.private_storage = True
 
-# (str) Python-for-Android branch to use, defaults to master
-p4a.branch = master
+# (list) Include additional resources
+android.add_resources = res/values/strings.xml
 
-# (str) Extra command line arguments to pass when invoking python-for-android
-p4a.extra_args = --requirements=openssl
+[buildozer]
 
-# 
-# iOS specific
-#
-
-# (str) Path to a custom kivy-ios folder
-#ios.kivy_ios_dir = ../kivy-ios
-
-# (str) Xcode version to use
-#ios.xcode = /Applications/Xcode.app/Contents/Developer
-
-# (str) Xcode build type
-#ios.xcode_build_type = Debug
-
-# (str) ios arch to build
-#ios.archs = arm64
-
-#
-# Buildozer specific
-#
-
-# (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
+# (int) Log level
 log_level = 2
 
-# (int) Display warning if buildozer is run as root (0 = False, 1 = True)
+# (bool) Warn if root access is enabled
 warn_on_root = 1
 
-# (str) Path to build artifact storage, absolute or relative to spec file
-# build_dir = 
+# (str) Additional arguments for the build command
+build_args = --release
 
-# (str) Path to buildozer storage, absolute or relative to spec file
-#bin_dir = 
+# (str) Additional arguments for the clean command
+clean_args = --all
 
-# (list) Directory to exclude (default is .svn,.git,.hg,dist,build,__pycache__)
-#exclude_dirs = 
-
-# (list) Directory to exclude in the final archive for the App
-#exclude_dirs_sdist = 
-
-# (list) Include specific files into the distribution
-#include_files = 
-
-# (str) Change the build type to manual (to overwrite specific build commands)
-# build_type = manual
-
-# (str) Where to unpack (temp) files used for build
-# temp_dir =
+# (bool) Enable verbose output
+verbose = 1
