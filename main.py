@@ -1,56 +1,126 @@
 from kivymd.app import MDApp
 from kivy.lang import Builder
-from jnius import autoclass, cast
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
-from kivy.uix.label import Label
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.clock import mainthread, Clock
+from kivymd.uix.button import MDRaisedButton
+from kivymd.uix.textfield import MDTextField
+from kivymd.uix.label import MDLabel
+from kivymd.uix.boxlayout import MDBoxLayout
 
-# استيراد الفئات الضرورية من pyjnius
-PythonActivity = autoclass('org.kivy.android.PythonActivity')
-VpnService = autoclass('android.net.VpnService')
-Intent = autoclass('android.content.Intent')
+KV = '''
+ScreenManager:
+    MenuScreen:
+    ConnectScreen:
 
-class VPNApp(App):
+<MenuScreen>:
+    name: "menu"
+
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 20
+
+        MDLabel:
+            text: "Welcome to VPN App"
+            halign: "center"
+            font_style: "H4"
+        
+        MDRaisedButton:
+            text: "Start VPN"
+            pos_hint: {"center_x": 0.5}
+            on_press: app.switch_to_connect()
+
+<ConnectScreen>:
+    name: "connect"
+
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 20
+
+        MDTextField:
+            id: server_ip
+            hint_text: "Server IP"
+        
+        MDTextField:
+            id: port
+            hint_text: "Port"
+            input_filter: "int"
+        
+        MDTextField:
+            id: username
+            hint_text: "Username"
+        
+        MDTextField:
+            id: password
+            hint_text: "Password"
+            password: True
+        
+        MDRaisedButton:
+            text: "Connect"
+            pos_hint: {"center_x": 0.5}
+            on_press: app.connect_vpn()
+
+        MDRaisedButton:
+            text: "Disconnect"
+            pos_hint: {"center_x": 0.5}
+            on_press: app.disconnect_vpn()
+
+        MDLabel:
+            id: status
+            text: "Status: Disconnected"
+            halign: "center"
+            theme_text_color: "Hint"
+'''
+
+class MenuScreen(Screen):
+    pass
+
+
+class ConnectScreen(Screen):
+    pass
+
+
+class VPNApp(MDApp):
     def build(self):
-        self.server_address = TextInput(hint_text="Enter Server Address", multiline=False)
-        self.port = TextInput(hint_text="Enter Port", multiline=False)
-        self.username = TextInput(hint_text="Enter Username", multiline=False)
-        self.password = TextInput(hint_text="Enter Password", multiline=False, password=True)
+        self.screen_manager = Builder.load_string(KV)
+        return self.screen_manager
 
-        connect_button = Button(text="Connect")
-        connect_button.bind(on_press=self.start_vpn)
+    def switch_to_connect(self):
+        """Switch to the connect screen."""
+        self.screen_manager.current = "connect"
 
-        self.log_label = Label(text="Logs will appear here...", size_hint_y=None, height=100)
+    @mainthread
+    def update_status(self, status, color="Primary"):
+        """Update the status label."""
+        status_label = self.screen_manager.get_screen("connect").ids.status
+        status_label.text = f"Status: {status}"
+        if color not in ["Primary", "Secondary", "Hint", "Error", "Custom", "ContrastParentBackground"]:
+            color = "Primary"
+        status_label.theme_text_color = color
 
-        layout = BoxLayout(orientation="vertical")
-        layout.add_widget(self.server_address)
-        layout.add_widget(self.port)
-        layout.add_widget(self.username)
-        layout.add_widget(self.password)
-        layout.add_widget(connect_button)
-        layout.add_widget(self.log_label)
+    def connect_vpn(self):
+        """Simulate VPN connection."""
+        server_ip = self.screen_manager.get_screen("connect").ids.server_ip.text
+        port = self.screen_manager.get_screen("connect").ids.port.text
+        username = self.screen_manager.get_screen("connect").ids.username.text
+        password = self.screen_manager.get_screen("connect").ids.password.text
 
-        return layout
-
-    def start_vpn(self, instance):
-        server = self.server_address.text
-        port = self.port.text
-        username = self.username.text
-        password = self.password.text
-
-        if not server or not port or not username or not password:
-            self.log_label.text = "All fields are required!"
+        if not server_ip or not port or not username or not password:
+            self.update_status("Please fill all fields", "Error")
             return
 
-        try:
-            activity = PythonActivity.mActivity
-            intent = Intent(activity, VpnService)
-            activity.startActivity(intent)
-            self.log_label.text = "VPN started successfully!"
-        except Exception as e:
-            self.log_label.text = f"Error: {str(e)}"
+        self.update_status("Connecting...", "Hint")
+        Clock.schedule_once(self.simulate_vpn_connection, 2)
+
+    def disconnect_vpn(self):
+        """Simulate VPN disconnection."""
+        self.update_status("Disconnected", "Error")
+
+    def simulate_vpn_connection(self, dt):
+        """Simulate a successful VPN connection."""
+        self.update_status("Connected", "Primary")
+
 
 if __name__ == "__main__":
     VPNApp().run()
