@@ -6,6 +6,13 @@ from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.label import MDLabel
 from kivymd.uix.boxlayout import MDBoxLayout
+from jnius import autoclass, JavaException
+
+# Android VPN
+try:
+    VpnService = autoclass("org.novfensec.nfsapk.MyVpnService")
+except JavaException:
+    VpnService = None
 
 KV = '''
 ScreenManager:
@@ -100,7 +107,7 @@ class VPNApp(MDApp):
         status_label.theme_text_color = color
 
     def connect_vpn(self):
-        """Simulate VPN connection."""
+        """Simulate VPN connection and start the VPN service."""
         server_ip = self.screen_manager.get_screen("connect").ids.server_ip.text
         port = self.screen_manager.get_screen("connect").ids.port.text
         username = self.screen_manager.get_screen("connect").ids.username.text
@@ -111,6 +118,10 @@ class VPNApp(MDApp):
             return
 
         self.update_status("Connecting...", "Hint")
+
+        # Start VPN service
+        self.start_vpn_service()
+
         Clock.schedule_once(self.simulate_vpn_connection, 2)
 
     def disconnect_vpn(self):
@@ -120,6 +131,14 @@ class VPNApp(MDApp):
     def simulate_vpn_connection(self, dt):
         """Simulate a successful VPN connection."""
         self.update_status("Connected", "Primary")
+
+    def start_vpn_service(self):
+        """Start the VPN service."""
+        if VpnService:
+            vpn_service = VpnService()
+            vpn_service.onStartCommand(None, 0, 0)
+        else:
+            self.update_status("VPN Service not found", "Error")
 
 
 if __name__ == "__main__":
