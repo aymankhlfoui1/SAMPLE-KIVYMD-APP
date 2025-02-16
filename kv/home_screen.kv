@@ -1,1 +1,20 @@
+<HomeScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: dp(20)
+        spacing: dp(10)
 
+        MDLabel:
+            text: "🌟 تطبيق التهجئة"
+            halign: "center"
+            font_style: "H5"
+
+        MDRaisedButton:
+            text: "ابدأ التهجئة"
+            pos_hint: {"center_x": 0.5}
+            on_release: app.root.current = "spell"
+
+        MDRaisedButton:
+            text: "⚙️ الإعدادات"
+            pos_hint: {"center_x": 0.5}
+            on_release: app.root.current = "settings"
