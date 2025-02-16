@@ -1,19 +1,16 @@
 from kivymd.app import MDApp
-from kivy.lang import Builder
+from kivy.uix.screenmanager import ScreenManager
+from screens.home_screen import HomeScreen
+from screens.spell_screen import SpellScreen
+from screens.settings_screen import SettingsScreen
 
-class SampleApp(MDApp):
-    
+class MyApp(MDApp):
     def build(self):
-        self.appKv='''
-MDScreen:
-    MDLabel:
-        text:'Hello,World.'
-        multiline:True
-        color:"blue"
-        halign:'center'         
-'''
-        AppScreen=Builder.load_string(self.appKv)
-        return AppScreen
+        sm = ScreenManager()
+        sm.add_widget(HomeScreen(name="home"))
+        sm.add_widget(SpellScreen(name="spell"))
+        sm.add_widget(SettingsScreen(name="settings"))
+        return sm
 
-SampleApp().run()
-    
+if __name__ == "__main__":
+    MyApp().run()
