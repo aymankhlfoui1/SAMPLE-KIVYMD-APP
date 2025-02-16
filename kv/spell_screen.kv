@@ -1,1 +1,22 @@
+<SpellScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: dp(20)
+        spacing: dp(10)
 
+        MDLabel:
+            text: "🔡 تدريب التهجئة"
+            halign: "center"
+            font_style: "H5"
+
+        MDTextField:
+            id: word_input
+            hint_text: "أدخل كلمة جديدة"
+
+        MDRaisedButton:
+            text: "ابدأ التهجئة"
+            on_release: app.start_spell()
+
+        MDRaisedButton:
+            text: "🔙 العودة"
+            on_release: app.root.current = "home"
