@@ -1,1 +1,14 @@
+<SettingsScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: dp(20)
+        spacing: dp(10)
 
+        MDLabel:
+            text: "⚙️ الإعدادات"
+            halign: "center"
+            font_style: "H5"
+
+        MDRaisedButton:
+            text: "🔙 العودة"
+            on_release: app.root.current = "home"
